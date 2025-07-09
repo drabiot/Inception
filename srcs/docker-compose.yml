@@ -22,7 +22,8 @@ services:
     env_file: .env
     networks:
       - inception
-    #volumes: make volume
+    volumes:
+      - mariadb_data:/var/lib/mysql
   nginx:
     container_name: nginx
     build: requirements/nginx
@@ -32,11 +33,13 @@ services:
     restart: always
     networks:
       - inception
-    #volumes: make volume
+    volumes:
+      - wordpress_data:/var/www/wordpress
   wordpress:
     container_name: wordpress
     build: requirements/wordpress
     env_file: .env
     networks:
       - inception
-    #volumes: make volume
+    volumes:
+      - wordpress_data:/var/www/wordpress
