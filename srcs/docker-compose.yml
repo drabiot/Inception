@@ -1,14 +1,32 @@
+networks:
+  inception:
+
+volumes:
+  mariadb_data:
+  wordpress_data:
+
 services:
   mariadb:
     container_name: mariadb
-    build: requiremnents/mariadb
+    build: requirements/mariadb
     env_file: .env
+    networks:
+      - inception
+    #volumes: make volume
   nginx:
     container_name: nginx
-    build: requiremnents/nginx
+    build: requirements/nginx
     env_file: .env
-    ports: "443:443"
+    ports:
+      - "443:443"
+    restart: always
+    networks:
+      - inception
+    #volumes: make volume
   wordpress:
     container_name: wordpress
-    build: requiremnents/wordpress
+    build: requirements/wordpress
     env_file: .env
+    networks:
+      - inception
+    #volumes: make volume
