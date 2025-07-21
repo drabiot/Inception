@@ -1,20 +1,6 @@
 networks:
   inception:
 
-volumes:
-  mariadb_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/tchartie/data/mariadb
-  wordpress_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/tchartie/data/wordpress
-
 services:
   mariadb:
     container_name: mariadb
@@ -41,5 +27,21 @@ services:
     env_file: .env
     networks:
       - inception
+    depends_on:
+      - mariadb
     volumes:
       - wordpress_data:/var/www/wordpress
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/tchartie/data/mariadb
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/tchartie/data/wordpress

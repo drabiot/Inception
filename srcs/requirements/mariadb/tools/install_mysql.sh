@@ -1,13 +1,32 @@
 #!/bin/sh
 
-service mysql start;
+set -e
 
-mysql -e "CREATE DATABASE IF NOT EXISTS \`${MARIADB_DATABASE}\`;"
-mysql -e "CREATE USER IF NOT EXISTS \`${MARIADB_USER}\`@'localhost' IDENTIFIED BY '${MARIADB_PASSWORD}';"
-mysql -e "GRANT ALL PRIVILEGES ON \`${MARIADB_DATABASE}\`.* TO \`${MARIADB_USER}\`@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';"
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';"
+if [ ! -d /var/lib/mysql/mysql ]; then
+    echo "Initialisation of the database..."
+    mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql > /dev/null
 
-mysql -e "FLUSH PRIVILEGES;"
+    mysqld_safe --skip-networking &
+    pid="$!"
 
-mysqladmin -u root -p$MARIADB_ROOT_PASSWORD shutdown
-exec mysqld_safe
+    until mysqladmin ping --silent; do
+        sleep 1
+    done
+
+    echo "Init"
+    mysql -u mysql <<-EOSQL
+        CREATE DATABASE IF NOT EXISTS \`${MARIADB_DATABASE}\`;
+        CREATE USER IF NOT EXISTS \`${MARIADB_USER}\`@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';
+        GRANT ALL PRIVILEGES ON \`${MARIADB_DATABASE}\`.* TO \`${MARIADB_USER}\`@'%';
+        ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
+        FLUSH PRIVILEGES;
+EOSQL
+
+    mysqladmin -u root -p"${MARIADB_ROOT_PASSWORD}" shutdown
+    wait "$pid"
+else
+    echo "Database already created"
+fi
+
+echo "MariaDB launching"
+exec "$@"
