@@ -7,9 +7,11 @@ RUN     apt-get install -y \
         php7.4 \
         php-fpm \
         php-mysql\
-        mariadb-client
+        mariadb-client \
+        curl
 
 RUN mkdir -p /var/www
+RUN mkdir -p /run/php && chown -R www-data:www-data /run/php
 RUN wget https://fr.wordpress.org/wordpress-6.7.2-fr_FR.tar.gz -O /var/www/wp.gz
 RUN cd /var/www && tar -xf wp.gz && rm wp.gz
 

@@ -2,7 +2,7 @@
 
 set -e
 
-if [ ! -d /var/lib/mysql/mysql ]; then
+if [ ! -d /var/lib/mysql/aria_log_control ]; then
     echo "Initialisation of the database..."
     mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql > /dev/null
 
@@ -14,7 +14,7 @@ if [ ! -d /var/lib/mysql/mysql ]; then
     done
 
     echo "Init"
-    mysql -u mysql <<-EOSQL
+    mysql -u root <<-EOSQL
         CREATE DATABASE IF NOT EXISTS \`${MARIADB_DATABASE}\`;
         CREATE USER IF NOT EXISTS \`${MARIADB_USER}\`@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';
         GRANT ALL PRIVILEGES ON \`${MARIADB_DATABASE}\`.* TO \`${MARIADB_USER}\`@'%';
