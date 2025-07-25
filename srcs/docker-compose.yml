@@ -19,12 +19,16 @@ services:
     restart: always
     networks:
       - inception
+    depends_on:
+      - wordpress
     volumes:
       - wordpress_data:/var/www/wordpress
   wordpress:
     container_name: wordpress
     build: requirements/wordpress
     env_file: .env
+    expose:
+      - "9000"
     networks:
       - inception
     depends_on:
