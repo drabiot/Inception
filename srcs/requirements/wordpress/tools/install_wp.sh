@@ -2,17 +2,6 @@
 
 set -e
 
-echo "Waiting for MariaDB to be available..."
-for i in {1..60}; do
-    if mysqladmin ping -h "mariadb" -u "${MARIADB_USER}" "--password=${MARIADB_PASSWORD}" --silent; then
-        echo "MariaDB is up."
-        break
-    else
-        echo "MariaDB not available, retrying in 10 seconds..."
-        sleep 10
-    fi
-done
-
 cd /var/www/wordpress
 
 if [ ! -f /var/www/wordpress/wp-config.php ]; then

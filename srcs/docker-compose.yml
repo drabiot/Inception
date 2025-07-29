@@ -6,10 +6,18 @@ services:
     container_name: mariadb
     build: requirements/mariadb
     env_file: .env
+    restart: always
+    privileged: true
     networks:
       - inception
     volumes:
       - mariadb_data:/var/lib/mysql
+    init: true
+    healthcheck:
+        test:		"mariadb-admin ping"
+        interval:	5s
+        timeout:	1m
+        retries:	3
   nginx:
     container_name: nginx
     build: requirements/nginx
@@ -27,12 +35,11 @@ services:
     container_name: wordpress
     build: requirements/wordpress
     env_file: .env
-    expose:
-      - "9000"
     networks:
       - inception
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     volumes:
       - wordpress_data:/var/www/wordpress
 
