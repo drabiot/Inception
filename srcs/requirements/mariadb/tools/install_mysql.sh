@@ -2,7 +2,7 @@
 
 set -e
 
-if [ ! -d /var/lib/mysql/aria_log_control ]; then
+if [ ! -d /var/lib/mysql/mariadb ]; then
     echo "Initialisation of the database..."
     mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql > /dev/null
 
