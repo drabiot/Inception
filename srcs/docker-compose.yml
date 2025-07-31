@@ -31,10 +31,12 @@ services:
       - wordpress
     volumes:
       - wordpress_data:/var/www/wordpress
+    init: true
   wordpress:
     container_name: wordpress
     build: requirements/wordpress
     env_file: .env
+    restart: always
     networks:
       - inception
     depends_on:
@@ -42,6 +44,7 @@ services:
         condition: service_healthy
     volumes:
       - wordpress_data:/var/www/wordpress
+    init: true
 
 volumes:
   mariadb_data:
